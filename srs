@@ -1,0 +1,200 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+class Tarea {
+    private String descripcion;
+    private String fechaLimite;
+    private String prioridad; // Alta, Media, Baja
+    private String categoria; // Trabajo, Estudio, Personal, Otro
+    private boolean completada;
+
+    // Constructor
+    public Tarea(String descripcion, String fechaLimite, String prioridad, String categoria) {
+        this.descripcion = descripcion;
+        this.fechaLimite = fechaLimite;
+        this.prioridad = prioridad;
+        this.categoria = categoria;
+        this.completada = false; // por defecto
+    }
+
+    // Getters y Setters
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public String getFechaLimite() { return fechaLimite; }
+    public void setFechaLimite(String fechaLimite) { this.fechaLimite = fechaLimite; }
+
+    public String getPrioridad() { return prioridad; }
+    public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public boolean isCompletada() { return completada; }
+    public void setCompletada(boolean completada) { this.completada = completada; }
+
+    // Métodos
+    public void mostrarInfo(int indice) {
+        System.out.println("[" + indice + "] " + descripcion +
+                " | Fecha: " + fechaLimite +
+                " | Prioridad: " + prioridad +
+                " | Categoría: " + categoria +
+                " | Estado: " + (completada ? "Completada" : "Pendiente"));
+    }
+
+    public void marcarComoCompletada() {
+        this.completada = true;
+    }
+
+    public void editarTarea(String descripcion, String fechaLimite, String prioridad, String categoria) {
+        if (!descripcion.isEmpty()) this.descripcion = descripcion;
+        if (!fechaLimite.isEmpty()) this.fechaLimite = fechaLimite;
+        if (!prioridad.isEmpty()) this.prioridad = prioridad;
+        if (!categoria.isEmpty()) this.categoria = categoria;
+    }
+}
+
+
+class GestorTareas {
+    private ArrayList<Tarea> listaTareas = new ArrayList<>();
+
+    public void agregarTarea(Tarea t) {
+        listaTareas.add(t);
+        System.out.println("✅ Tarea agregada con éxito.");
+    }
+
+    public void listarTareas() {
+        if (listaTareas.isEmpty()) {
+            System.out.println("No hay tareas registradas.");
+        } else {
+            for (int i = 0; i < listaTareas.size(); i++) {
+                listaTareas.get(i).mostrarInfo(i);
+            }
+        }
+    }
+
+    public void listarTareasPorEstado(boolean completadas) {
+        boolean hay = false;
+        for (int i = 0; i < listaTareas.size(); i++) {
+            if (listaTareas.get(i).isCompletada() == completadas) {
+                listaTareas.get(i).mostrarInfo(i);
+                hay = true;
+            }
+        }
+        if (!hay) {
+            System.out.println("No hay tareas " + (completadas ? "completadas" : "pendientes") + ".");
+        }
+    }
+
+    public void marcarTareaComoCompletada(int indice) {
+        if (indice >= 0 && indice < listaTareas.size()) {
+            listaTareas.get(indice).marcarComoCompletada();
+            System.out.println("✅ Tarea marcada como completada.");
+        } else {
+            System.out.println("❌ Número de tarea inválido.");
+        }
+    }
+
+    public void editarTarea(int indice, String descripcion, String fecha, String prioridad, String categoria) {
+        if (indice >= 0 && indice < listaTareas.size()) {
+            listaTareas.get(indice).editarTarea(descripcion, fecha, prioridad, categoria);
+            System.out.println("✅ Tarea editada con éxito.");
+        } else {
+            System.out.println("❌ Número de tarea inválido.");
+        }
+    }
+
+    public void eliminarTarea(int indice) {
+        if (indice >= 0 && indice < listaTareas.size()) {
+            listaTareas.remove(indice);
+            System.out.println("✅ Tarea eliminada con éxito.");
+        } else {
+            System.out.println("❌ Número de tarea inválido.");
+        }
+    }
+}
+
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        GestorTareas gestor = new GestorTareas();
+        int opcion;
+
+        do {
+            System.out.println("\n===== MENÚ DE GESTIÓN DE TAREAS =====");
+            System.out.println("1. Agregar tarea");
+            System.out.println("2. Listar todas las tareas");
+            System.out.println("3. Marcar tarea como completada");
+            System.out.println("4. Editar tarea");
+            System.out.println("5. Listar solo tareas pendientes");
+            System.out.println("6. Listar solo tareas completadas");
+            System.out.println("7. Eliminar tarea");
+            System.out.println("8. Salir");
+            System.out.print("Seleccione una opción: ");
+            opcion = sc.nextInt();
+            sc.nextLine(); // Limpiar buffer
+
+            switch (opcion) {
+                case 1:
+                    System.out.print("Descripción: ");
+                    String desc = sc.nextLine();
+                    System.out.print("Fecha límite: ");
+                    String fecha = sc.nextLine();
+                    System.out.print("Prioridad (Alta, Media, Baja): ");
+                    String prioridad = sc.nextLine();
+                    System.out.print("Categoría (Trabajo, Estudio, Personal, Otro): ");
+                    String categoria = sc.nextLine();
+                    gestor.agregarTarea(new Tarea(desc, fecha, prioridad, categoria));
+                    break;
+
+                case 2:
+                    gestor.listarTareas();
+                    break;
+
+                case 3:
+                    System.out.print("Número de tarea a marcar: ");
+                    int numComp = sc.nextInt();
+                    gestor.marcarTareaComoCompletada(numComp);
+                    break;
+
+                case 4:
+                    System.out.print("Número de tarea a editar: ");
+                    int numEdit = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Nueva descripción (o vacío para no cambiar): ");
+                    String newDesc = sc.nextLine();
+                    System.out.print("Nueva fecha límite (o vacío para no cambiar): ");
+                    String newFecha = sc.nextLine();
+                    System.out.print("Nueva prioridad (o vacío para no cambiar): ");
+                    String newPrioridad = sc.nextLine();
+                    System.out.print("Nueva categoría (o vacío para no cambiar): ");
+                    String newCategoria = sc.nextLine();
+                    gestor.editarTarea(numEdit, newDesc, newFecha, newPrioridad, newCategoria);
+                    break;
+
+                case 5:
+                    gestor.listarTareasPorEstado(false);
+                    break;
+
+                case 6:
+                    gestor.listarTareasPorEstado(true);
+                    break;
+
+                case 7:
+                    System.out.print("Número de tarea a eliminar: ");
+                    int numDel = sc.nextInt();
+                    gestor.eliminarTarea(numDel);
+                    break;
+
+                case 8:
+                    System.out.println("👋 Saliendo del programa...");
+                    break;
+
+                default:
+                    System.out.println("❌ Opción inválida.");
+            }
+        } while (opcion != 8);
+    }
+}
